@@ -10,8 +10,8 @@ formHTML = """
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
   <head>
     <title>Add a Consultant to Stat390</title>
-    <link rel="stylesheet" type="text/css" href="https://www.stanford.edu/dept/its/css/modern/reset.css" media="all" />
-    <link rel="stylesheet" type="text/css" href="https://www.stanford.edu/dept/its/css/services/webforms/themes/stanford.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="https://web.stanford.edu/dept/its/css/modern/reset.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="https://web.stanford.edu/dept/its/css/services/webforms/themes/stanford.css" media="all" />
   </head>
   <body>
   <h1>Add a Consultant to Stat 390</h1>
@@ -51,8 +51,8 @@ responseHTML = """
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
   <head>
     <title>Stat 390 Consultant added</title>
-    <link rel="stylesheet" type="text/css" href="https://www.stanford.edu/dept/its/css/modern/reset.css" media="all" />
-    <link rel="stylesheet" type="text/css" href="https://www.stanford.edu/dept/its/css/services/webforms/themes/stanford.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="https://web.stanford.edu/dept/its/css/modern/reset.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="https://web.stanford.edu/dept/its/css/services/webforms/themes/stanford.css" media="all" />
   </head>
   <body>
 

@@ -9,8 +9,8 @@ indexHTML = """
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
   <head>
     <title>Stat 390 Consultants</title>
-    <link rel="stylesheet" type="text/css" href="https://www.stanford.edu/dept/its/css/modern/reset.css" media="all" />
-    <link rel="stylesheet" type="text/css" href="https://www.stanford.edu/dept/its/css/services/webforms/themes/stanford.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="https://web.stanford.edu/dept/its/css/modern/reset.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="https://web.stanford.edu/dept/its/css/services/webforms/themes/stanford.css" media="all" />
     <link rel="stylesheet" type="text/css" href="table.css" />
 </style>
 </head>
