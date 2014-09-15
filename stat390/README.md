@@ -40,9 +40,8 @@ directory structure is exactly as included: `admin`, `client` and
    i.e. the student consultants in step 2, just run
    `initialize_consultants.py` to populate the database. You can add
    others via a web interface if people enroll later. For example, my
-   consultant csv file just contains
-   `"Narasimhan, Balasubramanian", "naras@stanford.edu"` in addition to
-   the header line.
+   consultant csv file just contains my full name and email address
+   in addition to the header line.
 * With every consultant added/deleted, add or remove their sunet id in
    `admin/.htaccess`.  YES, this has to be done manually even if you
    use the web interface to add consultants.
