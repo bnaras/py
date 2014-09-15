@@ -92,12 +92,12 @@ reqIndexHTML = """
   <h1>Request %(id)s</h1>
 
   <h3>%(name)s [ %(affiliation)s ]</h3>
-    
+
   <p>
   <label>Email</label><br/>
     <a href="mailto:%(email)s">%(email)s</a>
     </p>
-    
+
     <p>
     <label>Description</label><br/>
     %(description)s
@@ -107,12 +107,12 @@ reqIndexHTML = """
     <label>Web Links</label><br/>
     %(webLinks)s
     </p>
-    
+
     <p>
     <label>Visit Time</label><br/>
     %(visitTime)s
     </p>
-    
+
     <p>
     <label>Time of Request</label><br/>
     %(requestTime)s
@@ -153,12 +153,12 @@ reqDisplayHTML = """
   <h1>Request %(id)s</h1>
 
   <h3>%(name)s [ %(affiliation)s ]</h3>
-    
+
   <p>
   <label>Email</label><br/>
     <a href="mailto:%(email)s">%(email)s</a>
     </p>
-    
+
     <p>
     <label>Description</label><br/>
     %(description)s
@@ -168,12 +168,12 @@ reqDisplayHTML = """
     <label>Web Links</label><br/>
     %(webLinks)s
     </p>
-    
+
     <p>
     <label>Visit Time</label><br/>
     %(visitTime)s
     </p>
-    
+
     <p>
     <label>Time of Request</label><br/>
     %(requestTime)s
@@ -236,12 +236,9 @@ import cgi, cgitb, fcntl, os, smtplib
 ## Function to generate the relevant available dates based on blackout_dates
 ##
 def generateRequestFormHTML():
-    current_time = datetime.now()
-    i = 0
-    while BLACKOUT_TIMES[i] <= current_time:
-        i = i + 1
     result = requestFormHTMLPrologue
-    for value in AVAILABLE_DATES[i:]:
+    current_time = datetime.now()
+    for value in [AVAILABLE_DATES[x] for x in range(len(BLACKOUT_TIMES)) if BLACKOUT_TIMES[x] > current_time]:
         result += '<option value="' + value + '">' + value + '</option>\n'
     return result + requestFormHTMLEpilogue
 
