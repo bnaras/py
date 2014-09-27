@@ -226,7 +226,11 @@ def makeDateTime(x):
     endTime = terms[2].split("-")[1]
     if (terms[3].find('pm') >= 0):
         offset = 12
-    dateStr = mon + ' ' + day + ' ' + str(datetime.now().year) + ' ' + str(int(endTime) + offset) + ':00:00'
+    endTimeTerms = endTime.split(':')
+    if (len(endTimeTerms) > 1):
+        dateStr = mon + ' ' + day + ' ' + str(datetime.now().year) + ' ' + str(int(endTimeTerms[0]) + offset) + ':' + endTimeTerms[1] + ':00'
+    else:
+        dateStr = mon + ' ' + day + ' ' + str(datetime.now().year) + ' ' + str(int(endTimeTerms[0]) + offset) + ':00:00'
     return datetime.strptime(dateStr, "%b %d %Y %H:%M:%S")
 
 BLACKOUT_TIMES = [ makeDateTime(x) for x in AVAILABLE_DATES ]
