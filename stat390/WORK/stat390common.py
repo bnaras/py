@@ -214,7 +214,7 @@ DB_URL = 'sqlite:///' + WORK_DIR + '/' + 'requests.sqlite3'
 
 ## Compute the blackout times for each quarter
 from datetime import datetime
-def makeDateTime(x):
+def makeDateTime(x, useEndOfDay=True):
     offset = 0
     terms = x.split()
     if (len(terms) != 4):
@@ -223,14 +223,17 @@ def makeDateTime(x):
     day = terms[1].split(',')[0]
     if (len(day) == 1):
         day = '0' + day
-    endTime = terms[2].split("-")[1]
-    if (terms[3].find('pm') >= 0):
-        offset = 12
-    endTimeTerms = endTime.split(':')
-    if (len(endTimeTerms) > 1):
-        dateStr = mon + ' ' + day + ' ' + str(datetime.now().year) + ' ' + str(int(endTimeTerms[0]) + offset) + ':' + endTimeTerms[1] + ':00'
+    if (useEndOfDay):
+        dateStr = mon + ' ' + day + ' ' + str(datetime.now().year) + ' 18:00:00'
     else:
-        dateStr = mon + ' ' + day + ' ' + str(datetime.now().year) + ' ' + str(int(endTimeTerms[0]) + offset) + ':00:00'
+        endTime = terms[2].split("-")[1]
+        if (terms[3].find('pm') >= 0):
+            offset = 12
+        endTimeTerms = endTime.split(':')
+        if (len(endTimeTerms) > 1):
+            dateStr = mon + ' ' + day + ' ' + str(datetime.now().year) + ' ' + str(int(endTimeTerms[0]) + offset) + ':' + endTimeTerms[1] + ':00'
+        else:
+            dateStr = mon + ' ' + day + ' ' + str(datetime.now().year) + ' ' + str(int(endTimeTerms[0]) + offset) + ':00:00'
     return datetime.strptime(dateStr, "%b %d %Y %H:%M:%S")
 
 BLACKOUT_TIMES = [ makeDateTime(x) for x in AVAILABLE_DATES ]
