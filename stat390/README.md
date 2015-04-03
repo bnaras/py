@@ -45,15 +45,16 @@ Follow these instructions to set up the class site using a web form.
 
 1. Prepare a CSV file containing the name of the instructor. As a test, you should first add yourself as an instructor . The format of the file is as follows:
 
-- Any line starting with `#` is a comment and will be ignored.
-- The first non-comment line encountered should be a header line exactly as follows (with quotes): 
-```
-"Name","Sunet","Role"
-```
-- Lines should contain three columns: `full_name`, `sunet`, `role`, each quoted. Note that we need the `sunet` id, which may not be the stanford email id. The allowable roles are student or instructor (case matters). 
-```
-"Blow, Joe","foobar","instructor"
-```
+  - Any line starting with `#` is a comment and will be ignored.
+  - The first non-comment line encountered should be a header line exactly as follows   (with quotes): 
+  ```
+  "Name","Sunet","Role"
+  ```
+  - Lines should contain three columns: `full_name`, `sunet`, `role`, each quoted. Note that we need the `sunet` id, which may not be the stanford email id. The allowable roles are student or instructor (case matters). 
+  ```
+  "Blow, Joe","foobar","instructor"
+  ```
+
 2. Prepare a text file of time slots when the class will meet. Here is an example.
 ```
 ##
@@ -70,15 +71,18 @@ Dec 25, 15:00-16:00
 Dec 26, 9:00-10:00
 Dec 26, 11:00-14:00
 ```
+
 3. Access the `setup` page in your browser and upload these two files as noted on the form. The `setup` page URL is typically:
 ```
 https://<your_web_root_URL>/cgi-bin/stat390/setup/
 ```
+
 4. Once set up, try out a form request by accessing
 ```
 https://<your_web_root_URL>/cgi-bin/stat390/client/create_request.py
 ```
    and filling out the form.  Make a few testing requests.
+
 
 5. Access the admin interface and see the reports at
 ```
