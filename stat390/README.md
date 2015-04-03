@@ -45,12 +45,12 @@ Follow these instructions to set up the class site using a web form.
 
 1. Prepare a CSV file containing the name of the instructor. As a test, you should first add yourself as an instructor . The format of the file is as follows:
 
-  1. Any line starting with `#` is a comment and will be ignored.
-  2. The first non-comment line encountered should be a header line exactly as follows (with quotes): 
+- Any line starting with `#` is a comment and will be ignored.
+- The first non-comment line encountered should be a header line exactly as follows (with quotes): 
 ```
 "Name","Sunet","Role"
 ```
-  3. Lines should contain three columns: `full_name`, `sunet`, `role`, each quoted. Note that we need the `sunet` id, which may not be the stanford email id. The allowable roles are student or instructor (case matters). 
+- Lines should contain three columns: `full_name`, `sunet`, `role`, each quoted. Note that we need the `sunet` id, which may not be the stanford email id. The allowable roles are student or instructor (case matters). 
 ```
 "Blow, Joe","foobar","instructor"
 ```
