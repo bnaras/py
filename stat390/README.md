@@ -71,26 +71,21 @@ Dec 25, 15:00-16:00
 Dec 26, 9:00-10:00
 Dec 26, 11:00-14:00
 ```
-
 3. Access the `setup` page in your browser and upload these two files as noted on the form. The `setup` page URL is typically:
 ```
 https://<your_web_root_URL>/cgi-bin/stat390/setup/
 ```
-
 4. Once set up, try out a form request by accessing
 ```
 https://<your_web_root_URL>/cgi-bin/stat390/client/create_request.py
 ```
    and filling out the form.  Make a few testing requests.
-
-
 5. Access the admin interface and see the reports at
 ```
 https://<your_web_root_URL>/cgi-bin/stat390/admin/
 ```
-   Access one of the requests and add to the report field and save.
-   If all goes well, then you can repeat step 3 with the actual list
-   of class instructor/students and timeslots.
+
+Access one of the requests and add to the report field and save. If all goes well, then you can repeat step 3 with the actual list of class instructor/students and timeslots.
 
 ### Command-line interface
 
