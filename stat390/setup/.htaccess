@@ -1,0 +1,6 @@
+AuthType WebAuth
+require user naras
+require user ckirby
+require user cgates
+require user vanstone
+

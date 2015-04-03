@@ -1,28 +1,29 @@
 ################Configurable variables##################################
-## It is assumed admin, client and WORK are under this directory
-## Default suggestions are for Stanford
-APP_DIR = '<afs_path_to_home_dir>/cgi-bin/stat390'
-## Example: APP_DIR = '/afs/ir.stanford.edu/users/n/a/naras/cgi-bin/stat390'
-APP_WEBROOT = '<your_web_URL>/cgi-bin/stat390' ## Note URL!
-## Example: APP_WEBROOT = 'https://web.stanford.edu/~naras/cgi-bin/stat390'
-APP_LOGGING = False  ## Allowable values True/False
-LOG_DIR = APP_DIR + '/LOG' ## If logging is true above, ensure this exists
-SMTP_SERVER = 'smtp.yourdomain'
-## Example: SMTP_SERVER = 'smtp.stanford.edu'
-CONSULTANTS_CSV = APP_DIR + "/WORK/consultants/enrolled.csv" # change appropriately
-## Add yourself at least to the consultants file, as specified in the README.
-INSTRUCTOR_EMAIL = "<sunet_id>@stanford.edu" # change appropriately
-
-## display value; the corresponding blackout_time is computed below automatically
-## i.e. AVAILABLE_DATES[i] will not be shown as a choice after BLACKOUT_TIMES[i]
-## CHANGE THIS FOR EACH QUARTER
-## Note: code to find blackout time is not great, don't push it. Or improve it.
-## ONLY allowed formats (spaces, commas important):
-##  "Jan 10, 10-12 noon" or "Feb 2, 12-2 pm" or "March 2, 9-11 am"
 ##
-AVAILABLE_DATES = [ "Apr 1, 3-4 pm",
-                    "Apr 13, 2-4 pm",
-                    "Apr 13, 6-7 pm",
-                    "Apr 15, 11-1 pm"]
+## Note for non-Unix users: All file names are best without spaces.
+## Else you are expected to know how to escape spaces. HEED THIS!
+##
+## It is assumed admin, client and WORK are under this directory
+## as it would be by default.
+##
+## Default suggestions are for Stanford
+##
+
+APP_DIR = 'Change to your dept cgi-bin directory' ## Change if you copy
+APP_WEBROOT = 'https://web.stanford.edu/dept/<your_dept cgi-bin-directory>' ## Note URL!
+APP_LOGGING = True  ## Allowable values True/False
+LOG_DIR = APP_DIR + '/LOG' ## If logging is true above, ensure this exists
+SMTP_SERVER = 'your smtp server' ## e.g. smtp.stanford.edu
+CONSULTANTS_CSV = APP_DIR + "/WORK/consultants/test-consultants.csv" # change appropriately
+STAT390_GROUP_FILE = APP_DIR + "/admin/.stat390group"
+
+##
+## The time slots, one per line. These should be the display value in the strict format
+## specified in the example slots file. The corresponding blackout_time is computed
+## automatically i.e. slots[i] will not be shown as a choice if the current time is
+## beyond 6pm of the day of the time slot.
+## Note: code to find blackout time is not great, don't push it. Or improve it.
+##
+TIME_SLOTS_FILE = APP_DIR + "/WORK/time-slots.txt"
 ## Advanced configuration possible in stat390common.py
 

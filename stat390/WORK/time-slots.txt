@@ -1,0 +1,13 @@
+##
+## Any line starting with # is a comment and will be ignored.
+## Thus it is easy to drop slots by just commenting it out.
+##
+## ONLY allowed formats (spaces, commas important): 
+##  "Jan 10, 10:00-12:00" or "Feb 2, 12:00-14:00" or "Mar 2, 9:00-11:00"
+##  "Apr 10, 11:30-13:30"
+##
+Dec 25, 8:00-10:00
+Dec 25, 11:00-13:00
+Dec 25, 15:00-16:00
+Dec 26, 9:00-10:00
+Dec 26, 11:00-14:00

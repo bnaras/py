@@ -22,7 +22,8 @@ indexHTML = """
   <table class="table">
   <tr>
     <th>Name</th>
-    <th>Email</th>
+    <th>Sunet</th>
+    <th>Role</th>
   </tr>
   %(rows)s
   </table>
@@ -34,7 +35,8 @@ indexHTML = """
 tableRowHTML = """
 <tr>
   <td>%(name)s</td>
-  <td><a href="mailto:%(email)s">%(email)s</a></td>
+  <td><a href="mailto:%(sunet)s@stanford.edu">%(sunet)s</a></td>
+  <td>%(role)s</td>
 <tr>
 """
 
@@ -43,7 +45,8 @@ session = sessionmaker(bind=engine)()
 tableRowsHTML = ""
 for consultant in session.query(Consultant):
     tableRowsHTML += tableRowHTML % {"name" : consultant.name,
-                                     "email" : consultant.id}
+                                     "sunet" : consultant.sunet,
+                                     "role" : consultant.role}
 session.close();
 ## Now just print the output
 print 'Content-Type: text/html'

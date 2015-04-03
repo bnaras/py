@@ -1,7 +1,16 @@
 # A Simple webapp for Consulting Requests (like Stat390)
 
 This is a simple webapp with a python form handler backed by a SQLite
-database for managing consulting requests.
+database for managing consulting requests. The available paths for the
+webapp are:
+
+1. `/client/create_request.py` for making consulting requests.
+
+2. `/admin/index.html` for students and instructors participanting in
+   the class.
+
+3. `/setup/index.html` for staff to set up the application at the
+   beginning of each quarter. 
 
 The Stanford infrastructure requires that you enable cgi scripts in
 your web space if you have not already done so; see the
@@ -23,32 +32,90 @@ Only the `admin` and the `client` directories need to be in `cgi-bin`
 in the Stanford web infrastructure. The `WORK` directory _should not
 be visible_ over the web. You can probably move it elsewhere and
 change the code in the admin and client files to reflect its location
-(the sys.path.append part). The current code assumes that the
-directory structure is exactly as included: `admin`, `client` and
-`WORK` are at the same level!
+(the `sys.path.append` part). But not recommended unless you really
+understand the code. So you should generally leave the directory
+structure exactly as included: `admin`, `client` and `WORK` at the
+same level!
 
 ## At the start of a new quarter
 
-* Edit `admin/.htaccess` and add only instructor sunet ID. For example,
-  `require user naras` for just me.
-* Edit `WORK/stat390config.py` appropriately. Make sure you set
-   instructor email correctly. And update the available dates for the
-   consulting sessions. The year is assumed to be the current year.
-* `cd` to `WORK` directory and copy `requests.sqlite3-starter` to
-   `requests.sqlite3`
-* If you specified a csv file of students enrolled for the quarter,
-   i.e. the student consultants in step 2, just run
-   `initialize_consultants.py` to populate the database. You can add
-   others via a web interface if people enroll later. For example, my
-   consultant csv file just contains my full name and email address
-   in addition to the header line.
-* With every consultant added/deleted, add or remove their sunet id in
-   `admin/.htaccess`.  YES, this has to be done manually even if you
-   use the web interface to add consultants.
-* Try out the form, by creating a request. The URL will be typically
-   something like
-   `https://<your_root>/cgi-bin/stat390/client/create_request.py` and
-   make a request and ensure that everything works. After that you can
-   replace the database in step 3 again with the starter database at
-   which point the class is good to go.
+### Web interface setup
 
+Follow these instructions to set up the class site using a web form. 
+
+1. Prepare a CSV file containing the name of the instructor. As a
+   test, you should first add yourself as an instructor . The format
+   of the file is as follows:
+
+1.1. Any line starting with # is a comment and will be ignored.
+
+1.2. The first non-comment line encountered should be a header line
+     exactly as follows (with quotes): 
+```
+"Name","Sunet","Role"
+```
+
+1.3. Lines should contain three columns: `full_name`, `sunet`, `role`,
+     each quoted. Note that we need the `sunet` id, which may not be
+     the stanford email id. The allowable roles are student or
+     instructor (case matters). 
+```
+"Blow, Joe","foobar","instructor"
+```
+
+2. Prepare a text file of time slots when the class will meet. Here is
+   an example.
+```
+##
+## Any line starting with # is a comment and will be ignored.
+## Thus it is easy to drop slots by just commenting it out.
+##
+## ONLY allowed formats (spaces, commas important): 
+##  "Jan 10, 10:00-12:00" or "Feb 2, 12:00-14:00" or "Mar 2, 9:00-11:00"
+##  "Apr 10, 11:30-13:30"
+##
+Dec 25, 8:00-10:00
+Dec 25, 11:00-13:00
+Dec 25, 15:00-16:00
+Dec 26, 9:00-10:00
+Dec 26, 11:00-14:00
+```
+
+3. Access the `setup` page in your browser and upload these two files
+   as noted on the form. The `setup` page URL is typically:
+```
+https://<your_web_root_URL>/cgi-bin/stat390/setup/
+```
+
+4. Once set up, try out a form request by accessing
+```
+https://<your_web_root_URL>/cgi-bin/stat390/client/create_request.py
+```
+   and filling out the form.  Make a few testing requests.
+
+5. Access the admin interface and see the reports at
+```
+https://<your_web_root_URL>/cgi-bin/stat390/admin/
+```
+   Access one of the requests and add to the report field and save.
+   If all goes well, then you can repeat step 3 with the actual list
+   of class instructor/students and timeslots.
+
+### Command-line interface
+
+The format of the data is exactly the same as in the web
+interface. You have to create the files as specified there. 
+
+1. Edit `WORK/stat390config.py` appropriately, if not already done
+   so. The defaults are already set for the Department of Statistics,
+   so about the only thing that might need to be modified is the name
+   of the initial consultants file and the time-slots file. Some basic
+   examples are provided with the app. The year is assumed to be
+   the current year.
+
+2. Change directory to the `WORK` directory and run the script
+   `initialize_app.py` to initialize the database
+   (`./initialize_app.py` on any of the `corn` machines should usually
+   do it).
+
+Test it out as noted on the web form setup instructions.

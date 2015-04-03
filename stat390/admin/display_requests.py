@@ -22,9 +22,9 @@ indexHTML = """
   <p>
   <table class="table">
   <tr>
-    <th>Request ID</th>
+    <th><a href="%(displayRequestURL)s">Request ID</a></th>
     <th>Request Date</th>
-    <th>Visit Time</th>
+    <th><a href="%(displayRequestURL)s?sortBy=visitTime">Visit Time</a></th>
     <th>Name [Affiliation]</th>
   </tr>
   %(rows)s
@@ -45,25 +45,41 @@ tableRowHTML = """
 
 form = cgi.FieldStorage()
 id = form.getfirst("id", "").strip()
+sortBy = form.getfirst("sortBy", "").strip()
 report = form.getfirst("report")
 
 print 'Content-Type: text/html'
 print # HTTP says you have to have a blank line between headers and content
 
 session = sessionmaker(bind=engine)()
+slots = session.query(Timeslot)
+
 if id == "":
     ## Read from the SQLITE database
     tableRowsHTML = ""
-    for request in session.query(Request).order_by(Request.id.desc()):
-        tableRowsHTML += tableRowHTML % {"id" : request.id,
-                                         "url" : DISPLAY_REQUESTS_URL + '?id='+ request.id,
-                                         "requestTime" : request.requestTime.strftime("%Y-%m-%d %H:%M:%S"),
-                                         "visitTime" : request.visitTime,
-                                         "name" : request.name,
-                                         "affiliation" : request.affiliation}
-    print indexHTML % {"rows": tableRowsHTML}
+    if sortBy == "":
+        for request in session.query(Request).order_by(Request.id.desc()):
+            visitSlot = next(x for x in slots if x.startTime == request.visitTime) 
+            tableRowsHTML += tableRowHTML % {"id" : request.id,
+                                             "url" : DISPLAY_REQUESTS_URL + '?id='+ request.id,
+                                             "requestTime" : request.requestTime.strftime("%Y-%m-%d %H:%M:%S"),
+                                             "visitTime" : visitSlot.displayValue,
+                                             "name" : request.name,
+                                             "affiliation" : request.affiliation}
+    else:
+        for request in session.query(Request).order_by(Request.visitTime.desc()):
+            visitSlot = next(x for x in slots if x.startTime == request.visitTime) 
+            tableRowsHTML += tableRowHTML % {"id" : request.id,
+                                             "url" : DISPLAY_REQUESTS_URL + '?id='+ request.id,
+                                             "requestTime" : request.requestTime.strftime("%Y-%m-%d %H:%M:%S"),
+                                             "visitTime" : visitSlot.displayValue,
+                                             "name" : request.name,
+                                             "affiliation" : request.affiliation}
+        
+    print indexHTML % {"rows": tableRowsHTML, "displayRequestURL" : APP_WEBROOT + '/admin/display_requests.py'}
 else:
     request = session.query(Request).filter(Request.id==id).first()
+    visitSlot = next(x for x in slots if x.startTime == request.visitTime)     
     if request is None:
         print noSuchRequestPage % {"id" : id}
     else:
@@ -77,7 +93,7 @@ else:
                                     "affiliation" : request.affiliation,
                                     "requestTime" : request.requestTime.strftime("%Y-%m-%d %H:%M:%S"),
                                     "webLinks" : request.webLinks,
-                                    "visitTime" : request.visitTime,
+                                    "visitTime" : visitSlot.displayValue,
                                     "emailStatus" : request.emailSent,
                                     "report" : request.report}
         else:
@@ -93,7 +109,7 @@ else:
                                   "affiliation" : request.affiliation,
                                   "requestTime" : request.requestTime.strftime("%Y-%m-%d %H:%M:%S"),
                                   "webLinks" : request.webLinks,
-                                  "visitTime" : request.visitTime,
+                                  "visitTime" : visitSlot.displayValue,
                                   "emailStatus" : request.emailSent,
                                   "report" : reportText}
                         

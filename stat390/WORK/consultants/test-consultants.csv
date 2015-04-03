@@ -1,0 +1,19 @@
+##
+## Any line starting with # is a comment and will be ignored.
+##
+## The format of this csv file is as follows, in 3 columns
+##
+## full_name, sunet, role
+##
+## Note that we need the _sunet_ not the email prefix; i.e.,
+## foo.bar@stanford.edu might be a valid email address but
+## the sunet id is not foo.bar! 
+##
+## Allowable choices for roles are student or instructor.
+## No other values are allowed. Case matters.
+##
+## Note also how things are quoted.
+##
+## The header line that follows here should be left alone
+"Name","Sunet","Role"
+"Blow, Joe", "foobar", "instructor"

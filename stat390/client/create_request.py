@@ -108,8 +108,9 @@ else:
 
     # create a Session and update database
     session = sessionmaker(bind=engine)()
+    slot = session.query(Timeslot).filter(Timeslot.displayValue == visitTime).first()
     id = "C" + format(session.query(Request).count() + 1, "03d") # the next id
-    req_record = Request(id, name, affiliation, email, emailStatus, description, webLinks, visitTime, requestTime)
+    req_record = Request(id, name, affiliation, email, emailStatus, description, webLinks, slot.startTime, requestTime)
     session.add(req_record)
     session.commit()
     session.close()

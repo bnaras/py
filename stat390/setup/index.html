@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head>
+    <title>Setup Stat390 for a new quarter</title>
+    <link rel="stylesheet" type="text/css" href="https://web.stanford.edu/dept/its/css/modern/reset.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="https://web.stanford.edu/dept/its/css/services/webforms/themes/stanford.css" media="all" />
+  </head>
+  <body>
+    <h1>Important</h1>
+    <p> This is a simple web application that does not have all the bells and whistles you'd want to make it usable
+      for the general public. So, you've been informed.
+      <ul> 
+	<li>You should do this only <em>once</em> each quarter. Redoing it will move the database and all the details on current requests etc. making them not easily usable.</li>
+	<li>Ensure that the time slots have been completely finalized. There is no way to change them over the web (although it is easy to do so on the command line.)</li>
+	<li>You need a list of enrolled people with their sunet ids and roles.  You can additional people later through this webapp if needed, but you cannot remove those already added.</li>
+      </ul>
+    </p>
+    <h2>Input form</h2>
+    <p>
+      <div id="container">
+	<form enctype="multipart/form-data" action="setup.py" method="post">
+	  <p><strong><abbr class="required" title="Required Field">*</abbr> indicates required fields.</strong></p>
+	  <p class="input_text ">
+	    <label>Particpants File<abbr class="required" title="Required Field">*</abbr></label>
+	    <br />
+	    <input type="file" name="pFile"/>
+	  </p>
+	  <p><strong><abbr class="required" title="Required Field">*</abbr> indicates required fields.</strong></p>
+	  <p class="input_text ">
+	    <label>Timeslots File<abbr class="required" title="Required Field">*</abbr></label>
+	    <br />
+	    <input type="file" name="tsFile"/>
+	  </p>
+	  <p class="action">
+	    <button class="submit" type="submit">Setup Application</button>
+	  </p>
+	</form>
+      </div>
+    </p>
+  </body>
+</html>

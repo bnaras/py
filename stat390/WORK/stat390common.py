@@ -210,33 +210,39 @@ WORK_DIR = APP_DIR + '/WORK'
 REQUEST_FORM_URL = APP_WEBROOT + '/client/create_request.py'
 DISPLAY_REQUESTS_URL = APP_WEBROOT + '/admin/display_requests.py'
 ADD_CONSULTANT_URL = APP_WEBROOT + '/admin/add_consultant.py'
+ADMIN_HTACCESS_FILE = APP_DIR + '/admin/.htaccess'
 DB_URL = 'sqlite:///' + WORK_DIR + '/' + 'requests.sqlite3'
 
-## Compute the blackout times for each quarter
+
+## Read and return the time slots from file
+def readSlotsFromFile(fname):
+    f = open(fname, "r")
+    timeSlots = filter(lambda x: len(x) > 0 and not x.startswith('#'), [x.strip('\n\t\r') for x in f.readlines()])
+    f.close()
+    return(timeSlots)
+
+## make datetime object from timeslot specification
 from datetime import datetime
-def makeDateTime(x, useEndOfDay=True):
-    offset = 0
-    terms = x.split()
-    if (len(terms) != 4):
+
+def makeDateTime(x, useEndTime=False):
+    terms = x.lower().split()
+    if (len(terms) != 3):
         raise Exception('Bad time slot format: ' + x)
     mon = terms[0]
     day = terms[1].split(',')[0]
     if (len(day) == 1):
         day = '0' + day
-    if (useEndOfDay):
-        dateStr = mon + ' ' + day + ' ' + str(datetime.now().year) + ' 18:00:00'
+    if (useEndTime):
+        time = terms[2].split("-")[1]
     else:
-        endTime = terms[2].split("-")[1]
-        if (terms[3].find('pm') >= 0):
-            offset = 12
-        endTimeTerms = endTime.split(':')
-        if (len(endTimeTerms) > 1):
-            dateStr = mon + ' ' + day + ' ' + str(datetime.now().year) + ' ' + str(int(endTimeTerms[0]) + offset) + ':' + endTimeTerms[1] + ':00'
-        else:
-            dateStr = mon + ' ' + day + ' ' + str(datetime.now().year) + ' ' + str(int(endTimeTerms[0]) + offset) + ':00:00'
+        time = terms[2].split("-")[0]
+    dateStr = mon + ' ' + day + ' ' +  str(datetime.now().year) + ' ' + time + ':00'
     return datetime.strptime(dateStr, "%b %d %Y %H:%M:%S")
 
-BLACKOUT_TIMES = [ makeDateTime(x) for x in AVAILABLE_DATES ]
+def makeDisplayValue(x):
+    start = makeDateTime(x)
+    end = makeDateTime(x, useEndTime=True)
+    return datetime.strftime(start, "%b %d, %I:%M-") + datetime.strftime(end, "%I:%M %p")
 
 import cgi, cgitb, fcntl, os, smtplib
 ##
@@ -245,8 +251,10 @@ import cgi, cgitb, fcntl, os, smtplib
 def generateRequestFormHTML():
     result = requestFormHTMLPrologue
     current_time = datetime.now()
-    for value in [AVAILABLE_DATES[x] for x in range(len(BLACKOUT_TIMES)) if BLACKOUT_TIMES[x] > current_time]:
-        result += '<option value="' + value + '">' + value + '</option>\n'
+    session = sessionmaker(bind=engine)()
+    for timeslot in session.query(Timeslot).filter(Timeslot.blackoutTime > current_time):
+        result += '<option value="' + timeslot.displayValue + '">' + timeslot.displayValue + '</option>\n'
+    session.close()
     return result + requestFormHTMLEpilogue
 
 ## The next id is one more than the number of directories in the data dir
@@ -261,7 +269,8 @@ def revChronId(dataDir):
     return (["C" + format(x, "03d") for x in range(n, 0, -1) ])
 
 #send_email function: sends message from from_addr, assumes valid input
-def send_email(to_addr, subject, message):
+def send_email(sunet, subject, message):
+  to_addr = sunet + "@stanford.edu"  
   #form the email headers/text:
   from_addr = "Stat 390 Do Not Reply <nobody@stanford.edu>"
   email_body =  "From: " + from_addr + "\n"
@@ -280,8 +289,7 @@ def send_email(to_addr, subject, message):
   #end of send_email function
 
 ########################################################################
-
-from sqlalchemy import create_engine, ForeignKey, func
+from sqlalchemy import create_engine, ForeignKey, CheckConstraint, func
 from sqlalchemy import Column, DateTime, Integer, String, Boolean, Sequence
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref, sessionmaker
@@ -295,16 +303,34 @@ Base = declarative_base()
 class Consultant(Base):
     """"""
     __tablename__ = "consultant"
-    id = Column(String(50), primary_key=True)
-    name = Column(String(40))
+    sunet = Column(String(25), primary_key=True)
+    name = Column(String(50))
+    role = Column(String(25), CheckConstraint('role in ("instructor", "student")'))
 
-    def __init__(self, email, name):
+    def __init__(self, sunet, name, role):
         """"""
-        self.id = email
+        self.sunet = sunet
         self.name = name
+        self.role = role
+        
+    def __repr__(self):
+        return "<Consultant('%(name)s', %(role)s [%(email)s])>" % {"name" : self.name, "role" : self.role, "email" : self.sunet}
+
+class Timeslot(Base):
+    """"""
+    __tablename__ = "timeslot"
+    startTime = Column(DateTime, primary_key=True)
+    blackoutTime = Column(DateTime)
+    displayValue = Column(String(50))
+
+    def __init__(self, startTime, displayValue, blackoutTime):
+        """"""
+        self.startTime = startTime
+        self.blackoutTime = blackoutTime
+        self.displayValue = displayValue
 
     def __repr__(self):
-        return "<Consultant(%(name)s [%(email)s])>" % {"name" : self.name, "email" : self.id}
+        return "<Timeslot('%(startTime)s', '%(displayValue)s', '%(blackoutTime)s')>" % {"startTime" : self.startTime, "displayValue" : self.displayValue, "blackoutTime" : self.blackoutTime}
 
 class Request(Base):
     """"""
@@ -316,9 +342,10 @@ class Request(Base):
     emailSent = Column(Boolean)
     description = Column(String(10245))
     webLinks = Column(String(205))
-    visitTime = Column(String(25))
+    visitTime = Column(DateTime, ForeignKey("timeslot.startTime"))
+    timeslot = relationship("Timeslot")
     requestTime = Column(DateTime)
-    consultant_id = Column(String(50), ForeignKey("consultant.id"))
+    consultant_id = Column(String(50), ForeignKey("consultant.sunet"))
     consultant = relationship("Consultant", backref=backref('request', order_by=id))
     report = Column(String(10245))
 
@@ -335,7 +362,7 @@ class Request(Base):
         self.requestTime = requestTime
 
     def __repr__(self):
-        return "<Request('%(id)s', '%(visitTime)s', '%(name)s [%(affiliation)s]')>" % {"id" : self.id, "visitTime" : self.visitTime, "name" : self.name, "affiliation" : self.affiliation}
+        return "<Request('%(id)s', '%(visitTime)s', '%(requestTime)s', '%(name)s [%(affiliation)s]')>" % {"id" : self.id, "visitTime" : self.visitTime, "requestTime" : self.requestTime, "name" : self.name, "affiliation" : self.affiliation}
 
 
 ########################################################################

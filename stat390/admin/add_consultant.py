@@ -26,12 +26,23 @@ formHTML = """
     <input type="text" id="field_200881" class="input_text" name="name" value="" />
     </p>
 
-    <p class="email ">
+    <p class="sunet">
 
-    <label>Email <abbr class="required"
-    title="Required Field">*</abbr> (Please ensure this is correct!)</label>
+    <label>Sunet ID<abbr class="required"
+    title="Required Field">*</abbr> (Sunet ID != Email ID in general; so be sure!)</label>
     <br />
-    <input type="email" id="field_200887" class="email" name="email" value="" />
+    <input type="sunet" id="field_200887" class="sunet" name="sunet" value="" />
+    </p>
+
+    <p class="role">
+
+    <label>Role <abbr class="required"
+    title="Required Field">*</abbr></label>
+    <br />
+    <select name="role">
+       <option value="student" selected>student</option>
+       <option value="instructor">instructor</option>
+    </select>
     </p>
 
     <p class="action">
@@ -59,7 +70,7 @@ responseHTML = """
   <h1>Stat 390 Consultant</h1>
 
   <p>
-      %(name)s [ %(email)s ] has%(already)s been added as a consultant to
+      %(name)s [ %(sunet)s ] has%(already)s been added as a %(role)s to
   Stat390 and a notification email sent.
   </p>
     </body>
@@ -82,36 +93,42 @@ redirectHTML = """
 """
 
 emailText = """
-Name: %(name)s [ %(email)s ] has%(already)s been added as a consultant to Stat390.
+Name: %(name)s [ %(sunet)s ] has%(already)s been added as a %(role)s to Stat390.
 """
 form = cgi.FieldStorage()
 name = form.getfirst("name", "").strip()
-email = form.getfirst("email", "").strip()
+sunet = form.getfirst("sunet", "").strip()
+role = form.getfirst("role", "").strip()
 
 print 'Content-Type: text/html'
 print # HTTP says you have to have a blank line between headers and content
 
-if name == "" or email == "":
+if name == "" or sunet == "":
     print formHTML % {"actionURL" : ADD_CONSULTANT_URL}
 else:
     # create a Session
     session = sessionmaker(bind=engine)()
     already = ""
-    if session.query(Consultant).filter(Consultant.id == email).count() > 0: # already there
+    if session.query(Consultant).filter(Consultant.sunet == sunet).count() > 0: # already there
         already = " already"
     else: # add consultant
-        consultant = Consultant(email, name)
+        consultant = Consultant(sunet, name, role)
         session.add(consultant)
         session.commit()
+        ## Update the group file
+        f = open(STAT390_GROUP_FILE, "a")
+        f.write(" " + sunet)
+        f.close()
         ## Send email to Instructor and consultant
-        emailStatus = send_email(INSTRUCTOR_EMAIL, "Stat390 Consultant%s Added" % already,
-                                 emailText % {"name" : name, "email": email, "already": already})
-        emailStatus = send_email(email, "Stat390 Consultant%s Added" % already,
-                                 emailText % {"name" : name, "email": email, "already": already})
+        for instructor in session.query(Consultant).filter(Consultant.role == 'instructor'):
+            emailStatus = send_email(instructor.sunet, "Stat390 Consultant%s Added" % already,
+                                     emailText % {"name" : name, "sunet": sunet, "role": role, "already": already})
+        emailStatus = send_email(sunet, "Stat390 Consultant%s Added" % already,
+                                 emailText % {"name" : name, "sunet": sunet, "role": role, "already": already})
         
     ## close session
     session.close()        
     ## Fix response
-    responseHTML = responseHTML % {"name" : name, "email": email, "already": already}
+    responseHTML = responseHTML % {"name" : name, "sunet": sunet, "role": role, "already": already}
     ## Now just print out details for the requester
     print responseHTML
